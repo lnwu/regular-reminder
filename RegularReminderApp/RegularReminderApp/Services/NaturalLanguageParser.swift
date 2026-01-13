@@ -72,13 +72,22 @@ class NaturalLanguageParser {
         }
         
         // Try to parse Chinese number characters
+        // Using exact match to avoid substring issues
         let chineseNumbers: [String: Int] = [
             "一": 1, "两": 2, "二": 2, "三": 3, "四": 4, "五": 5,
-            "六": 6, "七": 7, "八": 8, "九": 9, "十": 10
+            "六": 6, "七": 7, "八": 8, "九": 9, "十": 10,
+            "十一": 11, "十二": 12, "十三": 13, "十四": 14, "十五": 15,
+            "十六": 16, "十七": 17, "十八": 18, "十九": 19, "二十": 20
         ]
         
+        // First try exact match for compound numbers
+        if let value = chineseNumbers[text] {
+            return value
+        }
+        
+        // Then try matching single characters (for simple cases)
         for (character, value) in chineseNumbers {
-            if text.contains(character) {
+            if text == character {
                 return value
             }
         }
