@@ -1,0 +1,71 @@
+/* 
+  Localizable.strings
+  RegularReminder
+
+  Created for simplified Chinese localization.
+*/
+
+/* App Name */
+"app_name" = "定时提醒";
+
+/* Main Screen */
+"reminders" = "提醒";
+"no_reminders" = "暂无提醒";
+"add_reminder_prompt" = "点击 + 添加新的定时提醒";
+
+/* Add Reminder */
+"add_reminder" = "添加提醒";
+"cancel" = "取消";
+"add" = "添加";
+"save" = "保存";
+
+/* Input Types */
+"natural_language_input" = "自然语言输入";
+"manual_input" = "手动输入";
+
+/* Form Fields */
+"reminder_title" = "提醒标题";
+"interval" = "间隔";
+"interval_unit" = "间隔单位";
+"start_date" = "开始时间";
+"repeat_period" = "重复周期";
+
+/* Interval Types */
+"days" = "天";
+"weeks" = "周";
+"months" = "月";
+"years" = "年";
+
+/* Examples */
+"example" = "示例";
+"example_1" = "每两周换被罩";
+"example_2" = "每3天浇花";
+"example_3" = "每个月还信用卡";
+"example_4" = "每年体检";
+
+/* Actions */
+"delete" = "删除";
+"complete" = "完成";
+"snooze" = "延后";
+"snooze_1_day" = "延后1天";
+"done" = "完成";
+
+/* Notifications */
+"reminder_notification_title" = "定时提醒";
+"notification_permission_required" = "定时提醒需要发送通知来提醒您";
+
+/* Status */
+"enabled" = "启用";
+"disabled" = "禁用";
+"next_reminder" = "下次提醒";
+
+/* Natural Language */
+"parse_success" = "识别成功";
+"parse_failed" = "无法识别输入的内容，请尝试其他格式";
+"describe_reminder" = "描述提醒";
+"placeholder_reminder" = "例如: 每两周换被罩";
+
+/* Info */
+"title" = "标题";
+"period" = "周期";
+"every" = "每";
