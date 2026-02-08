@@ -7,17 +7,12 @@ struct RegularReminderApp: App {
     @Environment(\.scenePhase) var scenePhase
     
     init() {
-        // Setup notification categories
-        NotificationService.shared.setupNotificationCategories()
+        // 只做最轻量级的初始化
+        #if targetEnvironment(simulator)
+        UserDefaults.standard.set(false, forKey: "haptic_feedback_enabled")
+        #endif
         
-        // Request notification permission
-        NotificationService.shared.requestAuthorization { granted in
-            if !granted {
-                print("Notification permission not granted")
-            }
-        }
-        
-        // Set notification delegate
+        // 设置通知代理
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
     }
     
@@ -25,24 +20,59 @@ struct RegularReminderApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(reminderStore)
+                .task {
+                    // 应用启动后立即异步加载数据
+                    await reminderStore.loadRemindersAsync()
+                    
+                    // 数据加载完成后再设置通知类别和刷新通知
+                    NotificationService.shared.setupNotificationCategories()
+                    await refreshNotificationsAsync()
+                    
+                    // 延迟请求通知权限
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        NotificationService.shared.requestAuthorization { granted in
+                            if !granted {
+                                print("Notification permission not granted")
+                            }
+                        }
+                    }
+                }
                 .onReceive(NotificationCenter.default.publisher(for: .reloadReminders)) { _ in
                     reminderStore.reloadReminders()
                 }
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .active {
-                // App became active, reload reminders and refresh notifications
-                reminderStore.reloadReminders()
-                updateNotifications()
+                // 应用回到前台时刷新数据
+                Task {
+                    await reminderStore.loadRemindersAsync()
+                }
             }
         }
     }
     
-    private func updateNotifications() {
-        // Reschedule notifications for all enabled reminders
-        for reminder in reminderStore.reminders where reminder.isEnabled {
-            NotificationService.shared.cancelNotification(for: reminder.id)
-            NotificationService.shared.scheduleNotification(for: reminder)
+    /// 异步刷新通知，不阻塞主线程
+    private func refreshNotificationsAsync() async {
+        let enabledReminders = reminderStore.reminders.filter { $0.isEnabled }
+        
+        // 分批处理，每批之间让出时间片
+        let batchSize = 5
+        for i in stride(from: 0, to: enabledReminders.count, by: batchSize) {
+            let end = min(i + batchSize, enabledReminders.count)
+            let batch = Array(enabledReminders[i..<end])
+            
+            // 在后台线程处理通知
+            await Task.detached(priority: .background) {
+                for reminder in batch {
+                    NotificationService.shared.cancelNotification(for: reminder.id)
+                    NotificationService.shared.scheduleNotification(for: reminder)
+                }
+            }.value
+            
+            // 小延迟让出时间片
+            if end < enabledReminders.count {
+                try? await Task.sleep(nanoseconds: 10_000_000) // 10ms
+            }
         }
     }
 }

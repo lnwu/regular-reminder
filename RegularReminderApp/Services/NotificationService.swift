@@ -69,4 +69,45 @@ class NotificationService {
         
         UNUserNotificationCenter.current().setNotificationCategories([category])
     }
+    
+    // MARK: - Debug Functions
+    
+    /// 获取所有待处理的通知请求
+    func getPendingNotifications(completion: @escaping ([UNNotificationRequest]) -> Void) {
+        UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
+            DispatchQueue.main.async {
+                completion(requests)
+            }
+        }
+    }
+    
+    /// 获取已送达的通知
+    func getDeliveredNotifications(completion: @escaping ([UNNotification]) -> Void) {
+        UNUserNotificationCenter.current().getDeliveredNotifications { notifications in
+            DispatchQueue.main.async {
+                completion(notifications)
+            }
+        }
+    }
+    
+    /// 取消所有通知（包括待处理和已送达的）
+    func cancelAllNotifications() {
+        // 取消所有待处理的通知
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        // 移除所有已送达的通知
+        UNUserNotificationCenter.current().removeAllDeliveredNotifications()
+        // 清除角标
+        UNUserNotificationCenter.current().setBadgeCount(0)
+    }
+    
+    /// 重新调度所有启用的提醒通知
+    func rescheduleAllNotifications(for reminders: [Reminder]) {
+        // 先取消所有
+        cancelAllNotifications()
+        
+        // 重新为启用的提醒调度
+        for reminder in reminders where reminder.isEnabled {
+            scheduleNotification(for: reminder)
+        }
+    }
 }

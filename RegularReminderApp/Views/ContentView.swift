@@ -3,11 +3,25 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var reminderStore: ReminderStore
     @State private var showingAddReminder = false
+    @State private var showingDeveloperSettings = false
+    @AppStorage("isDeveloperModeEnabled") private var isDeveloperModeEnabled = false
+    
+    /// 是否显示开发者入口 - DEBUG 模式下自动启用
+    private var showDeveloperEntry: Bool {
+        #if DEBUG
+        return true
+        #else
+        return isDeveloperModeEnabled
+        #endif
+    }
     
     var body: some View {
         NavigationStack {
             Group {
-                if reminderStore.reminders.isEmpty {
+                if reminderStore.isLoading {
+                    ProgressView()
+                        .scaleEffect(1.2)
+                } else if reminderStore.reminders.isEmpty {
                     emptyStateView
                 } else {
                     reminderListView
@@ -15,14 +29,29 @@ struct ContentView: View {
             }
             .navigationTitle(NSLocalizedString("app_name", comment: ""))
             .toolbar {
+                // 开发者模式按钮 - 放在左侧
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if showDeveloperEntry {
+                        Button(action: { showingDeveloperSettings = true }) {
+                            Image(systemName: "gearshape.2")
+                                .foregroundColor(.orange)
+                        }
+                    }
+                }
+                
+                // 添加按钮 - 放在右侧
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddReminder = true }) {
                         Image(systemName: "plus")
                     }
+                    .disabled(reminderStore.isLoading)
                 }
             }
             .sheet(isPresented: $showingAddReminder) {
                 AddReminderView()
+            }
+            .sheet(isPresented: $showingDeveloperSettings) {
+                DeveloperSettingsView()
             }
         }
     }
@@ -116,7 +145,6 @@ struct ReminderRow: View {
             set: { newValue in
                 var updatedReminder = reminder
                 updatedReminder.isEnabled = newValue
-                // Don't recalculate date to preserve manually snoozed dates
                 reminderStore.updateReminder(updatedReminder, recalculateDate: false)
             }
         )

@@ -2,14 +2,43 @@ import Foundation
 import UserNotifications
 
 /// Manages the storage and retrieval of reminders
+@MainActor
 class ReminderStore: ObservableObject {
     @Published var reminders: [Reminder] = []
+    @Published var isLoading = true
     
     private let saveKey = "SavedReminders"
     private let notificationService = NotificationService.shared
     
     init() {
+        // 同步加载缓存数据，让用户立即看到内容
         loadReminders()
+    }
+    
+    /// 异步加载提醒数据，不阻塞主线程
+    func loadRemindersAsync() async {
+        guard !isLoading else { return }
+        isLoading = true
+        
+        // 在后台线程读取 UserDefaults
+        let loadedReminders = await Task.detached(priority: .userInitiated) { () -> [Reminder] in
+            if let data = UserDefaults.standard.data(forKey: self.saveKey),
+               let decoded = try? JSONDecoder().decode([Reminder].self, from: data) {
+                return decoded
+            }
+            return []
+        }.value
+        
+        self.reminders = loadedReminders
+        self.isLoading = false
+    }
+    
+    /// 同步加载（仅在需要时保留，如 Siri Intent）
+    func loadReminders() {
+        if let data = UserDefaults.standard.data(forKey: saveKey),
+           let decoded = try? JSONDecoder().decode([Reminder].self, from: data) {
+            reminders = decoded
+        }
     }
     
     func addReminder(_ reminder: Reminder) {
@@ -88,13 +117,6 @@ class ReminderStore: ObservableObject {
     private func saveReminders() {
         if let encoded = try? JSONEncoder().encode(reminders) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
-        }
-    }
-    
-    private func loadReminders() {
-        if let data = UserDefaults.standard.data(forKey: saveKey),
-           let decoded = try? JSONDecoder().decode([Reminder].self, from: data) {
-            reminders = decoded
         }
     }
 }

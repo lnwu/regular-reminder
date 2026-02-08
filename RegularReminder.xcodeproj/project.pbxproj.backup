@@ -10,7 +10,6 @@
 		A1A1A1A1A1A1A1A1A1A1A1A1 /* RegularReminderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2B2B2B2B2B2B2B2B2B2B2B2 /* RegularReminderApp.swift */; };
 		A2A2A2A2A2A2A2A2A2A2A2A2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B3B3B3B3B3B3B3B3B3B3B3 /* ContentView.swift */; };
 		A3A3A3A3A3A3A3A3A3A3A3A3 /* AddReminderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4B4B4B4B4B4B4B4B4B4B4B4 /* AddReminderView.swift */; };
-		1952591ED1F0490FBB87223D /* DeveloperSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0C087E5E52459FAAA9AE8E /* DeveloperSettingsView.swift */; };
 		A4A4A4A4A4A4A4A4A4A4A4A4 /* Reminder.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B5B5B5B5B5B5B5B5B5B5B5 /* Reminder.swift */; };
 		A5A5A5A5A5A5A5A5A5A5A5A5 /* ReminderStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6B6B6B6B6B6B6B6B6B6B6B6 /* ReminderStore.swift */; };
 		A6A6A6A6A6A6A6A6A6A6A6A6 /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7B7B7B7B7B7B7B7B7B7B7B7 /* NotificationService.swift */; };
@@ -24,7 +23,6 @@
 		B2B2B2B2B2B2B2B2B2B2B2B2 /* RegularReminderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegularReminderApp.swift; sourceTree = "<group>"; };
 		B3B3B3B3B3B3B3B3B3B3B3B3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B4B4B4B4B4B4B4B4B4B4B4B4 /* AddReminderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddReminderView.swift; sourceTree = "<group>"; };
-		AD0C087E5E52459FAAA9AE8E /* DeveloperSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeveloperSettingsView.swift; sourceTree = "<group>"; };
 		B5B5B5B5B5B5B5B5B5B5B5B5 /* Reminder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reminder.swift; sourceTree = "<group>"; };
 		B6B6B6B6B6B6B6B6B6B6B6B6 /* ReminderStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReminderStore.swift; sourceTree = "<group>"; };
 		B7B7B7B7B7B7B7B7B7B7B7B7 /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
@@ -34,7 +32,6 @@
 		BBBBBBBBBBBBBBBBBBBBBBBB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C1C1C1C1C1C1C1C1C1C1C1C1 /* RegularReminder.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RegularReminder.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C3C3C3C3C3C3C3C3C3C3C3C3 /* Localizable.strings */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		L1L1L1L1L1L1L1L1L1L1L1L1 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DDDDDDDDDDDDDDDDDDDDDDDD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
@@ -68,7 +65,6 @@
 				E7E7E7E7E7E7E7E7E7E7E7E7 /* Intents */,
 				BABABABABABABABABABABABA /* Assets.xcassets */,
 				BBBBBBBBBBBBBBBBBBBBBBBB /* Info.plist */,
-				L1L1L1L1L1L1L1L1L1L1L1L1 /* LaunchScreen.storyboard */,
 				C3C3C3C3C3C3C3C3C3C3C3C3 /* Localizable.strings */,
 			);
 			path = RegularReminderApp;
@@ -87,7 +83,6 @@
 			children = (
 				B3B3B3B3B3B3B3B3B3B3B3B3 /* ContentView.swift */,
 				B4B4B4B4B4B4B4B4B4B4B4B4 /* AddReminderView.swift */,
-				AD0C087E5E52459FAAA9AE8E /* DeveloperSettingsView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,7 +169,6 @@
 			files = (
 				A9A9A9A9A9A9A9A9A9A9A9A9 /* Assets.xcassets in Resources */,
 				C2C2C2C2C2C2C2C2C2C2C2C2 /* Localizable.strings in Resources */,
-				L2L2L2L2L2L2L2L2L2L2L2L2 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,7 +182,6 @@
 				A1A1A1A1A1A1A1A1A1A1A1A1 /* RegularReminderApp.swift in Sources */,
 				A2A2A2A2A2A2A2A2A2A2A2A2 /* ContentView.swift in Sources */,
 				A3A3A3A3A3A3A3A3A3A3A3A3 /* AddReminderView.swift in Sources */,
-				1952591ED1F0490FBB87223D /* DeveloperSettingsView.swift in Sources */,
 				A4A4A4A4A4A4A4A4A4A4A4A4 /* Reminder.swift in Sources */,
 				A5A5A5A5A5A5A5A5A5A5A5A5 /* ReminderStore.swift in Sources */,
 				A6A6A6A6A6A6A6A6A6A6A6A6 /* NotificationService.swift in Sources */,
@@ -338,7 +331,7 @@
 				INFOPLIST_FILE = RegularReminderApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
@@ -371,7 +364,7 @@
 				INFOPLIST_FILE = RegularReminderApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
