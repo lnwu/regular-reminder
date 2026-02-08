@@ -81,5 +81,4 @@ class NaturalLanguageParser {
         
         return chineseNumbers[text]
     }
-    }
 }
