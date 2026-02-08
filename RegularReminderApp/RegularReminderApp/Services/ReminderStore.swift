@@ -23,10 +23,15 @@ class ReminderStore: ObservableObject {
         }
     }
     
-    func updateReminder(_ reminder: Reminder) {
+    func updateReminder(_ reminder: Reminder, recalculateDate: Bool = false) {
         if let index = reminders.firstIndex(where: { $0.id == reminder.id }) {
             var updatedReminder = reminder
-            updatedReminder.calculateNextReminderDate()
+            
+            // Only recalculate nextReminderDate if interval/start date changed
+            if recalculateDate {
+                updatedReminder.calculateNextReminderDate()
+            }
+            
             reminders[index] = updatedReminder
             saveReminders()
             
@@ -46,28 +51,36 @@ class ReminderStore: ObservableObject {
     
     func completeReminder(_ reminder: Reminder) {
         if let index = reminders.firstIndex(where: { $0.id == reminder.id }) {
-            reminders[index].complete()
+            var updatedReminder = reminders[index]
+            updatedReminder.complete()
+            reminders[index] = updatedReminder
             saveReminders()
             
             // Reschedule notification for next occurrence
             notificationService.cancelNotification(for: reminder.id)
-            if reminders[index].isEnabled {
-                notificationService.scheduleNotification(for: reminders[index])
+            if updatedReminder.isEnabled {
+                notificationService.scheduleNotification(for: updatedReminder)
             }
         }
     }
     
     func snoozeReminder(_ reminder: Reminder, by days: Int) {
         if let index = reminders.firstIndex(where: { $0.id == reminder.id }) {
-            reminders[index].snooze(by: days)
+            var snoozedReminder = reminders[index]
+            snoozedReminder.snooze(by: days)
+            reminders[index] = snoozedReminder
             saveReminders()
             
             // Reschedule notification
             notificationService.cancelNotification(for: reminder.id)
-            if reminders[index].isEnabled {
-                notificationService.scheduleNotification(for: reminders[index])
+            if snoozedReminder.isEnabled {
+                notificationService.scheduleNotification(for: snoozedReminder)
             }
         }
+    }
+    
+    func reloadReminders() {
+        loadReminders()
     }
     
     private func saveReminders() {

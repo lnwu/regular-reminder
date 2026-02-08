@@ -17,18 +17,20 @@ class NotificationService {
     
     func scheduleNotification(for reminder: Reminder) {
         let content = UNMutableNotificationContent()
-        content.title = "定时提醒"
+        content.title = NSLocalizedString("reminder_notification_title", comment: "")
         content.body = reminder.title
         content.sound = .default
         content.categoryIdentifier = "REMINDER_CATEGORY"
         content.userInfo = ["reminderId": reminder.id.uuidString]
         
-        // Calculate time interval from now to next reminder date
-        let timeInterval = reminder.nextReminderDate.timeIntervalSince(Date())
+        // Use calendar trigger for better reliability with long intervals
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour, .minute, .second], 
+                                                 from: reminder.nextReminderDate)
         
         // Only schedule if the date is in the future
-        if timeInterval > 0 {
-            let trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
+        if reminder.nextReminderDate > Date() {
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
             let request = UNNotificationRequest(identifier: reminder.id.uuidString, 
                                                content: content, 
                                                trigger: trigger)
@@ -48,13 +50,13 @@ class NotificationService {
     func setupNotificationCategories() {
         let completeAction = UNNotificationAction(
             identifier: "COMPLETE_ACTION",
-            title: "完成",
+            title: NSLocalizedString("complete", comment: ""),
             options: []
         )
         
         let snoozeAction = UNNotificationAction(
             identifier: "SNOOZE_ACTION",
-            title: "延后1天",
+            title: NSLocalizedString("snooze_1_day", comment: ""),
             options: []
         )
         

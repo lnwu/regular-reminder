@@ -32,6 +32,12 @@ struct AddReminderIntent: AppIntent {
         // Schedule notification
         NotificationService.shared.scheduleNotification(for: newReminder)
         
+        // Notify app to reload if it's running
+        NotificationCenter.default.post(
+            name: Notification.Name("reloadReminders"),
+            object: nil
+        )
+        
         let intervalDesc = newReminder.intervalValue == 1 ? 
             "每\(newReminder.intervalType.localizedName)" : 
             "每\(newReminder.intervalValue)\(newReminder.intervalType.localizedName)"

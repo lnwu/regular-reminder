@@ -13,7 +13,7 @@ struct ContentView: View {
                     reminderListView
                 }
             }
-            .navigationTitle("定时提醒")
+            .navigationTitle(NSLocalizedString("app_name", comment: ""))
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: { showingAddReminder = true }) {
@@ -36,11 +36,11 @@ struct ContentView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
             
-            Text("暂无提醒")
+            Text(NSLocalizedString("no_reminders", comment: ""))
                 .font(.title2)
                 .foregroundColor(.secondary)
             
-            Text("点击 + 添加新的定时提醒")
+            Text(NSLocalizedString("add_reminder_prompt", comment: ""))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -54,14 +54,14 @@ struct ContentView: View {
                         Button(role: .destructive) {
                             reminderStore.deleteReminder(reminder)
                         } label: {
-                            Label("删除", systemImage: "trash")
+                            Label(NSLocalizedString("delete", comment: ""), systemImage: "trash")
                         }
                     }
                     .swipeActions(edge: .leading, allowsFullSwipe: true) {
                         Button {
                             reminderStore.completeReminder(reminder)
                         } label: {
-                            Label("完成", systemImage: "checkmark")
+                            Label(NSLocalizedString("complete", comment: ""), systemImage: "checkmark")
                         }
                         .tint(.green)
                     }
@@ -92,6 +92,14 @@ struct ReminderRow: View {
     let reminder: Reminder
     @EnvironmentObject var reminderStore: ReminderStore
     
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        formatter.locale = Locale(identifier: "zh_CN")
+        return formatter
+    }()
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
@@ -109,7 +117,7 @@ struct ReminderRow: View {
                 HStack(spacing: 4) {
                     Image(systemName: "bell")
                         .font(.caption)
-                    Text("下次: \(formattedDate(reminder.nextReminderDate))")
+                    Text("\(NSLocalizedString("next_reminder", comment: "")): \(formattedDate(reminder.nextReminderDate))")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
@@ -128,25 +136,22 @@ struct ReminderRow: View {
             set: { newValue in
                 var updatedReminder = reminder
                 updatedReminder.isEnabled = newValue
-                reminderStore.updateReminder(updatedReminder)
+                reminderStore.updateReminder(updatedReminder, recalculateDate: false)
             }
         )
     }
     
     private var intervalDescription: String {
+        let every = NSLocalizedString("every", comment: "")
         if reminder.intervalValue == 1 {
-            return "每\(reminder.intervalType.localizedName)"
+            return "\(every)\(reminder.intervalType.localizedName)"
         } else {
-            return "每\(reminder.intervalValue)\(reminder.intervalType.localizedName)"
+            return "\(every)\(reminder.intervalValue)\(reminder.intervalType.localizedName)"
         }
     }
     
     private func formattedDate(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        formatter.locale = Locale(identifier: "zh_CN")
-        return formatter.string(from: date)
+        return Self.dateFormatter.string(from: date)
     }
 }
 

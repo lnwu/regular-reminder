@@ -22,7 +22,7 @@ struct AddReminderView: View {
         NavigationStack {
             Form {
                 Section {
-                    Toggle("自然语言输入", isOn: $useNaturalLanguage)
+                    Toggle(NSLocalizedString("natural_language_input", comment: ""), isOn: $useNaturalLanguage)
                         .onChange(of: useNaturalLanguage) { _, _ in
                             inputText = ""
                             title = ""
@@ -37,17 +37,17 @@ struct AddReminderView: View {
                     manualInputSection
                 }
             }
-            .navigationTitle("添加提醒")
+            .navigationTitle(NSLocalizedString("add_reminder", comment: ""))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("取消") {
+                    Button(NSLocalizedString("cancel", comment: "")) {
                         dismiss()
                     }
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("添加") {
+                    Button(NSLocalizedString("add", comment: "")) {
                         addReminder()
                     }
                     .disabled(!canAddReminder)
@@ -63,7 +63,7 @@ struct AddReminderView: View {
     
     private var naturalLanguageSection: some View {
         Section {
-            TextField("例如: 每两周换被罩", text: $inputText)
+            TextField(NSLocalizedString("placeholder_reminder", comment: ""), text: $inputText)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
             
@@ -72,7 +72,7 @@ struct AddReminderView: View {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
-                        Text("识别成功")
+                        Text(NSLocalizedString("parse_success", comment: ""))
                             .font(.subheadline)
                             .foregroundColor(.green)
                     }
@@ -80,36 +80,36 @@ struct AddReminderView: View {
                     Divider()
                     
                     HStack {
-                        Text("标题:")
+                        Text("\(NSLocalizedString("title", comment: "")):")
                             .foregroundColor(.secondary)
                         Text(parsedReminder.title)
                     }
                     
                     HStack {
-                        Text("周期:")
+                        Text("\(NSLocalizedString("period", comment: "")):")
                             .foregroundColor(.secondary)
-                        Text("每\(parsedReminder.intervalValue)\(parsedReminder.intervalType.localizedName)")
+                        Text("\(NSLocalizedString("every", comment: ""))\(parsedReminder.intervalValue)\(parsedReminder.intervalType.localizedName)")
                     }
                 }
                 .padding(.vertical, 8)
             }
         } header: {
-            Text("描述提醒")
+            Text(NSLocalizedString("describe_reminder", comment: ""))
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                Text("示例:")
+                Text("\(NSLocalizedString("example", comment: "")):")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("• 每两周换被罩")
+                Text("• \(NSLocalizedString("example_1", comment: ""))")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("• 每3天浇花")
+                Text("• \(NSLocalizedString("example_2", comment: ""))")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("• 每个月还信用卡")
+                Text("• \(NSLocalizedString("example_3", comment: ""))")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                Text("• 每年体检")
+                Text("• \(NSLocalizedString("example_4", comment: ""))")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -119,28 +119,28 @@ struct AddReminderView: View {
     private var manualInputSection: some View {
         Group {
             Section {
-                TextField("提醒标题", text: $title)
+                TextField(NSLocalizedString("reminder_title", comment: ""), text: $title)
             } header: {
-                Text("标题")
+                Text(NSLocalizedString("title", comment: ""))
             }
             
             Section {
                 Stepper("\(intervalValue)", value: $intervalValue, in: 1...365)
                 
-                Picker("间隔单位", selection: $intervalType) {
+                Picker(NSLocalizedString("interval_unit", comment: ""), selection: $intervalType) {
                     ForEach(IntervalType.allCases, id: \.self) { type in
                         Text(type.localizedName).tag(type)
                     }
                 }
                 .pickerStyle(.segmented)
             } header: {
-                Text("重复周期")
+                Text(NSLocalizedString("repeat_period", comment: ""))
             }
             
             Section {
-                DatePicker("开始时间", selection: $startDate)
+                DatePicker(NSLocalizedString("start_date", comment: ""), selection: $startDate)
             } header: {
-                Text("开始时间")
+                Text(NSLocalizedString("start_date", comment: ""))
             }
         }
     }
@@ -158,7 +158,7 @@ struct AddReminderView: View {
         
         if useNaturalLanguage {
             guard let parsedReminder = parser.parseReminder(from: inputText) else {
-                alertMessage = "无法识别输入的内容，请尝试其他格式"
+                alertMessage = NSLocalizedString("parse_failed", comment: "")
                 showingAlert = true
                 return
             }

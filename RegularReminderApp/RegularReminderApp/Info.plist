@@ -37,11 +37,5 @@
         <string>UIInterfaceOrientationLandscapeLeft</string>
         <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>NSUserNotificationsUsageDescription</key>
-    <string>定时提醒需要发送通知来提醒您</string>
-    <key>UIBackgroundModes</key>
-    <array>
-        <string>remote-notification</string>
-    </array>
 </dict>
 </plist>
