@@ -24,9 +24,6 @@ struct ContentView: View {
             .sheet(isPresented: $showingAddReminder) {
                 AddReminderView()
             }
-            .onReceive(NotificationCenter.default.publisher(for: .handleReminderAction)) { notification in
-                handleReminderAction(notification)
-            }
         }
     }
     
@@ -68,23 +65,6 @@ struct ContentView: View {
             }
         }
         .listStyle(.insetGrouped)
-    }
-    
-    private func handleReminderAction(_ notification: Notification) {
-        guard let reminderId = notification.userInfo?["reminderId"] as? UUID,
-              let action = notification.userInfo?["action"] as? String,
-              let reminder = reminderStore.reminders.first(where: { $0.id == reminderId }) else {
-            return
-        }
-        
-        switch action {
-        case "COMPLETE_ACTION":
-            reminderStore.completeReminder(reminder)
-        case "SNOOZE_ACTION":
-            reminderStore.snoozeReminder(reminder, by: 1)
-        default:
-            break
-        }
     }
 }
 
@@ -136,6 +116,7 @@ struct ReminderRow: View {
             set: { newValue in
                 var updatedReminder = reminder
                 updatedReminder.isEnabled = newValue
+                // Don't recalculate date to preserve manually snoozed dates
                 reminderStore.updateReminder(updatedReminder, recalculateDate: false)
             }
         )

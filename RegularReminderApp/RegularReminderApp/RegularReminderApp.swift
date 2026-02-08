@@ -50,7 +50,6 @@ struct RegularReminderApp: App {
 /// Handles notification responses
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, ObservableObject {
     static let shared = NotificationDelegate()
-    var reminderStore: ReminderStore?
     
     // Handle notification when app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter,
@@ -132,6 +131,5 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate, Observab
 }
 
 extension Notification.Name {
-    static let handleReminderAction = Notification.Name("handleReminderAction")
     static let reloadReminders = Notification.Name("reloadReminders")
 }

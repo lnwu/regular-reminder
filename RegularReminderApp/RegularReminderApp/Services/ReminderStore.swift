@@ -79,6 +79,8 @@ class ReminderStore: ObservableObject {
         }
     }
     
+    /// Reloads reminders from UserDefaults
+    /// Called when app becomes active or when reminders are updated externally (e.g., via Siri)
     func reloadReminders() {
         loadReminders()
     }
