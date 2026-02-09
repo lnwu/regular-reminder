@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct AddReminderView: View {
-    @EnvironmentObject var reminderStore: ReminderStore
-    @Environment(\.dismiss) var dismiss
+    @Environment(ReminderStore.self) private var reminderStore
+    @Environment(\.dismiss) private var dismiss
     
     @State private var inputText = ""
     @State private var useNaturalLanguage = true
@@ -15,6 +15,7 @@ struct AddReminderView: View {
     
     @State private var showingAlert = false
     @State private var alertMessage = ""
+    @State private var parsedReminder: Reminder?
     
     private let parser = NaturalLanguageParser()
     
@@ -26,6 +27,7 @@ struct AddReminderView: View {
                         .onChange(of: useNaturalLanguage) { _, _ in
                             inputText = ""
                             title = ""
+                            parsedReminder = nil
                         }
                 } header: {
                     Text("输入方式")
@@ -58,6 +60,9 @@ struct AddReminderView: View {
             } message: {
                 Text(alertMessage)
             }
+            .onChange(of: inputText) { _, newValue in
+                parsedReminder = parser.parseReminder(from: newValue)
+            }
         }
     }
     
@@ -67,31 +72,8 @@ struct AddReminderView: View {
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
             
-            if !inputText.isEmpty, let parsedReminder = parser.parseReminder(from: inputText) {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(.green)
-                        Text(NSLocalizedString("parse_success", comment: ""))
-                            .font(.subheadline)
-                            .foregroundColor(.green)
-                    }
-                    
-                    Divider()
-                    
-                    HStack {
-                        Text("\(NSLocalizedString("title", comment: "")):")
-                            .foregroundColor(.secondary)
-                        Text(parsedReminder.title)
-                    }
-                    
-                    HStack {
-                        Text("\(NSLocalizedString("period", comment: "")):")
-                            .foregroundColor(.secondary)
-                        Text("\(NSLocalizedString("every", comment: ""))\(parsedReminder.intervalValue)\(parsedReminder.intervalType.localizedName)")
-                    }
-                }
-                .padding(.vertical, 8)
+            if !inputText.isEmpty, let reminder = parsedReminder {
+                ParseResultCard(reminder: reminder)
             }
         } header: {
             Text(NSLocalizedString("describe_reminder", comment: ""))
@@ -99,19 +81,19 @@ struct AddReminderView: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text("\(NSLocalizedString("example", comment: "")):")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("• \(NSLocalizedString("example_1", comment: ""))")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("• \(NSLocalizedString("example_2", comment: ""))")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("• \(NSLocalizedString("example_3", comment: ""))")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
                 Text("• \(NSLocalizedString("example_4", comment: ""))")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundStyle(.secondary)
             }
         }
     }
@@ -147,7 +129,7 @@ struct AddReminderView: View {
     
     private var canAddReminder: Bool {
         if useNaturalLanguage {
-            return !inputText.isEmpty && parser.parseReminder(from: inputText) != nil
+            return !inputText.isEmpty && parsedReminder != nil
         } else {
             return !title.isEmpty
         }
@@ -157,12 +139,12 @@ struct AddReminderView: View {
         let reminder: Reminder
         
         if useNaturalLanguage {
-            guard let parsedReminder = parser.parseReminder(from: inputText) else {
+            guard let validReminder = parsedReminder else {
                 alertMessage = NSLocalizedString("parse_failed", comment: "")
                 showingAlert = true
                 return
             }
-            reminder = parsedReminder
+            reminder = validReminder
         } else {
             reminder = Reminder(
                 title: title,
@@ -177,7 +159,51 @@ struct AddReminderView: View {
     }
 }
 
+// MARK: - Extracted Views
+
+/// 解析结果卡片（支持 Liquid Glass 效果）
+struct ParseResultCard: View {
+    let reminder: Reminder
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundStyle(.green)
+                Text(NSLocalizedString("parse_success", comment: ""))
+                    .font(.subheadline)
+                    .foregroundStyle(.green)
+            }
+            
+            Divider()
+            
+            HStack {
+                Text("\(NSLocalizedString("title", comment: "")):")
+                    .foregroundStyle(.secondary)
+                Text(reminder.title)
+            }
+            
+            HStack {
+                Text("\(NSLocalizedString("period", comment: "")):")
+                    .foregroundStyle(.secondary)
+                Text("\(NSLocalizedString("every", comment: ""))\(reminder.intervalValue)\(reminder.intervalType.localizedName)")
+            }
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
+        .background {
+            if #available(iOS 26.0, *) {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(.regularMaterial)
+            } else {
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.green.opacity(0.1))
+            }
+        }
+    }
+}
+
 #Preview {
     AddReminderView()
-        .environmentObject(ReminderStore())
+        .environment(ReminderStore())
 }

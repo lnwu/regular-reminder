@@ -3,7 +3,7 @@ import UserNotifications
 
 @main
 struct RegularReminderApp: App {
-    @StateObject private var reminderStore = ReminderStore()
+    @State private var reminderStore = ReminderStore()
     @Environment(\.scenePhase) var scenePhase
     
     init() {
@@ -19,17 +19,24 @@ struct RegularReminderApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environmentObject(reminderStore)
+                .environment(reminderStore)
                 .task {
-                    // 应用启动后立即异步加载数据
-                    await reminderStore.loadRemindersAsync()
+                    // 启动时数据已经通过 init() 加载好了
+                    // 这里只需要在后台设置通知相关的内容
                     
-                    // 数据加载完成后再设置通知类别和刷新通知
-                    NotificationService.shared.setupNotificationCategories()
-                    await refreshNotificationsAsync()
+                    // 1. 设置通知类别（后台执行）
+                    await Task.detached(priority: .background) {
+                        NotificationService.shared.setupNotificationCategories()
+                    }.value
                     
-                    // 延迟请求通知权限
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    // 2. 异步刷新通知（后台执行，不阻塞 UI）
+                    Task.detached(priority: .background) {
+                        await self.refreshNotificationsAsync()
+                    }
+                    
+                    // 3. 延迟请求通知权限（不阻塞启动）
+                    try? await Task.sleep(nanoseconds: 500_000_000) // 0.5秒后
+                    await MainActor.run {
                         NotificationService.shared.requestAuthorization { granted in
                             if !granted {
                                 print("Notification permission not granted")
@@ -43,9 +50,9 @@ struct RegularReminderApp: App {
         }
         .onChange(of: scenePhase) { oldPhase, newPhase in
             if newPhase == .active {
-                // 应用回到前台时刷新数据
+                // 应用回到前台时静默刷新数据（不显示 loading）
                 Task {
-                    await reminderStore.loadRemindersAsync()
+                    await reminderStore.refreshReminders()
                 }
             }
         }

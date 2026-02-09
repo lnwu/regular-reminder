@@ -4,7 +4,7 @@ import UserNotifications
 /// 开发者设置视图
 struct DeveloperSettingsView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject var reminderStore: ReminderStore
+    @Environment(ReminderStore.self) private var reminderStore
     @AppStorage("isDeveloperModeEnabled") private var isDeveloperModeEnabled = true
     
     @State private var showResetAlert = false
@@ -38,7 +38,7 @@ struct DeveloperSettingsView: View {
                         Text("通知权限状态")
                         Spacer()
                         Text(notificationStatus)
-                            .foregroundColor(statusColor)
+                            .foregroundStyle(statusColor)
                     }
                     
                     Button {
@@ -55,7 +55,7 @@ struct DeveloperSettingsView: View {
                                 .scaleEffect(0.8)
                         } else {
                             Text("\(pendingCount)")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                     
@@ -67,7 +67,7 @@ struct DeveloperSettingsView: View {
                                 .scaleEffect(0.8)
                         } else {
                             Text("\(deliveredCount)")
-                                .foregroundColor(.secondary)
+                                .foregroundStyle(.secondary)
                         }
                     }
                     
@@ -91,7 +91,7 @@ struct DeveloperSettingsView: View {
                         Text("已保存提醒数量")
                         Spacer()
                         Text("\(reminderStore.reminders.count)")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .monospacedDigit()
                     }
                     
@@ -100,7 +100,7 @@ struct DeveloperSettingsView: View {
                         Spacer()
                         let enabledCount = reminderStore.reminders.filter { $0.isEnabled }.count
                         Text("\(enabledCount)")
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                             .monospacedDigit()
                     }
                     
@@ -128,14 +128,14 @@ struct DeveloperSettingsView: View {
                         Text("版本")
                         Spacer()
                         Text(appVersion)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                     
                     HStack {
                         Text("构建版本")
                         Spacer()
                         Text(buildVersion)
-                            .foregroundColor(.secondary)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }
@@ -188,7 +188,7 @@ struct DeveloperSettingsView: View {
     /// 检查通知权限状态
     private func checkNotificationStatus() {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 switch settings.authorizationStatus {
                 case .notDetermined:
                     notificationStatus = "未决定"
@@ -284,5 +284,5 @@ struct ReminderDebugListView: View {
 
 #Preview {
     DeveloperSettingsView()
-        .environmentObject(ReminderStore())
+        .environment(ReminderStore())
 }

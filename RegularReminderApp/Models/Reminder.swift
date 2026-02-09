@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 /// Represents a periodic reminder
-struct Reminder: Identifiable, Codable {
+struct Reminder: Identifiable, Codable, Equatable {
     var id: UUID
     var title: String
     var startDate: Date

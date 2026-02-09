@@ -2,24 +2,27 @@ import Foundation
 import UserNotifications
 
 /// Manages the storage and retrieval of reminders
+@Observable
 @MainActor
-class ReminderStore: ObservableObject {
-    @Published var reminders: [Reminder] = []
-    @Published var isLoading = true
+class ReminderStore {
+    var reminders: [Reminder] = []
+    var isLoading = true
     
     private let saveKey = "SavedReminders"
     private let notificationService = NotificationService.shared
     
     init() {
-        // 同步加载缓存数据，让用户立即看到内容
+        // 启动时立即同步加载数据，这样用户打开应用就能看到内容
+        // 这是轻量级操作，不会阻塞主线程太久
         loadReminders()
+        
+        // 数据加载完成，标记为不处于 loading 状态
+        self.isLoading = false
     }
     
-    /// 异步加载提醒数据，不阻塞主线程
-    func loadRemindersAsync() async {
-        guard !isLoading else { return }
-        isLoading = true
-        
+    /// 异步刷新提醒数据（用于应用从后台返回时）
+    /// 不会触发 isLoading，避免界面闪烁
+    func refreshReminders() async {
         // 在后台线程读取 UserDefaults
         let loadedReminders = await Task.detached(priority: .userInitiated) { () -> [Reminder] in
             if let data = UserDefaults.standard.data(forKey: self.saveKey),
@@ -29,8 +32,10 @@ class ReminderStore: ObservableObject {
             return []
         }.value
         
-        self.reminders = loadedReminders
-        self.isLoading = false
+        // 只在数据有变化时才更新，避免不必要的 UI 刷新
+        if loadedReminders != self.reminders {
+            self.reminders = loadedReminders
+        }
     }
     
     /// 同步加载（仅在需要时保留，如 Siri Intent）

@@ -9,7 +9,7 @@ class NotificationService {
     
     func requestAuthorization(completion: @escaping (Bool) -> Void) {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 completion(granted)
             }
         }
@@ -75,7 +75,7 @@ class NotificationService {
     /// 获取所有待处理的通知请求
     func getPendingNotifications(completion: @escaping ([UNNotificationRequest]) -> Void) {
         UNUserNotificationCenter.current().getPendingNotificationRequests { requests in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 completion(requests)
             }
         }
@@ -84,7 +84,7 @@ class NotificationService {
     /// 获取已送达的通知
     func getDeliveredNotifications(completion: @escaping ([UNNotification]) -> Void) {
         UNUserNotificationCenter.current().getDeliveredNotifications { notifications in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 completion(notifications)
             }
         }
