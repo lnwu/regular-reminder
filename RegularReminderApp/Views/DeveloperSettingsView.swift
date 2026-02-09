@@ -43,7 +43,7 @@ struct DeveloperSettingsView: View {
                     
                     Button {
                         openSystemNotificationSettings()
-                    } label: {
+                    } label: {w
                         Label("打开系统通知设置", systemImage: "arrow.up.right.square")
                     }
                     
